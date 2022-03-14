@@ -1,39 +1,62 @@
 package com.example;
 
+import com.example.input.delimiter.DelimiterFinder;
+import com.example.input.parser.StringToIntParser;
+import com.example.input.tokenizer.InputTokenizer;
+import com.example.input.validation.IllegalInputException;
+import com.example.input.validation.InputValidator;
+import com.example.precalculation.IntegerFilter;
+import com.example.precalculation.IntegerValidator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StringCalculatorTest {
-    private final StringCalculator stringCalculator = new StringCalculator();
+
+    private final StringCalculator stringCalculator = new StringCalculator(
+            new InputHandlerFacade(new DelimiterFinder(), new InputValidator(), new InputTokenizer(), new StringToIntParser()),
+            new IntegerValidator(),
+            new IntegerFilter()
+    );
 
     @Test
-    public void emptyStringShouldReturnZero() {
+    public void shouldReturnZeroForEmptyString() {
         var result = stringCalculator.add("");
-        assertEquals(result, 0);
+        assertEquals(0, result);
     }
 
     @Test
-    public void onlyNumberInStringShouldReturnThatNumber() {
+    public void shouldReturnOneForConstantString() {
         var result = stringCalculator.add("1");
-        assertEquals(result, 1);
+        assertEquals(1, result);
     }
 
     @Test
-    public void manyNumbersInStringShouldReturnSumOfTheseNumbers() {
+    public void shouldSumNumbersFromDelimitedString() {
         var result = stringCalculator.add("1,2,3");
-        assertEquals(result, 6);
+        assertEquals(6, result);
     }
 
     @Test
-    public void gibberishInputShouldReturnZero() {
-        var result = stringCalculator.add("not-a-number");
-        assertEquals(result, 0);
+    public void shouldThrowForMalformedInput() {
+        assertThrows(IllegalInputException.class, () -> stringCalculator.add("not-a-number"));
     }
 
     @Test
-    public void anyNonNumbersInProperInputShouldBeIgnored() {
+    public void shouldSumNumbersIgnoringNonNumbers() {
         var result = stringCalculator.add("1,a,2,3,4");
-        assertEquals(result, 10);
+        assertEquals(10, result);
+    }
+
+    @Test
+    public void shouldSumNumbersWhenCustomDelimiters() {
+        var result = stringCalculator.add("//[;][-]1;a-2-3;4");
+        assertEquals(10, result);
+    }
+
+    @Test
+    public void shouldSumNumbersWhenNewLines() {
+        var result = stringCalculator.add("1\n2\na\n3,4");
+        assertEquals(10, result);
     }
 }
