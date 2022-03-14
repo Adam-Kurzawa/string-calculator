@@ -59,4 +59,10 @@ public class StringCalculatorTest {
         var result = stringCalculator.add("1\n2\na\n3,4");
         assertEquals(10, result);
     }
+
+    @Test
+    public void shouldSumNumbersWhenNewLinesAndCustomDelimiters() {
+        var result = stringCalculator.add("//[-]\n1\n2\na\n3-4");
+        assertEquals(10, result);
+    }
 }
