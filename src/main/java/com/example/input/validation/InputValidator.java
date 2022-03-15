@@ -11,6 +11,9 @@ import java.util.regex.Pattern;
  */
 public class InputValidator {
     private static final String SLASHES = "//";
+    private static final String IMPROPER_START_REASON = "Improper input start";
+    private static final String IMPROPER_END_REASON = "Improper input end";
+    private static final String MALFORMED_REASON = "Malformed input";
 
     public void validate(Delimiters delimiters, String input) {
         if(input.isBlank())
@@ -23,12 +26,12 @@ public class InputValidator {
 
     private void throwIfInputStartsImproperly(String input) {
         if(!(input.startsWith(SLASHES) || startsWithNumber(input)))
-            throw new IllegalInputException(input);
+            throw new IllegalInputException(input, IMPROPER_START_REASON);
     }
 
     private void throwIfInputEndsImproperly(String input) {
         if(!endsWithNumber(input))
-            throw new IllegalInputException(input);
+            throw new IllegalInputException(input, IMPROPER_END_REASON);
     }
 
     private void throwIfInputIsMalformed(Delimiters delimiters, String input) {
@@ -40,7 +43,7 @@ public class InputValidator {
             var hasNumbers = numericMatcher.matches();
 
             if(!hasNumbers)
-                throw new IllegalInputException(input);
+                throw new IllegalInputException(input, MALFORMED_REASON);
         }
     }
 

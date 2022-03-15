@@ -13,13 +13,25 @@ public class InputValidatorTest {
     @Test
     public void shouldThrowIfInputStartsWithLetter() {
         var delimiters = new Delimiters(List.of(","), 0);
-        assertThrows(IllegalInputException.class, () -> inputValidator.validate(delimiters, "A//[,]1,2,3"));
+
+        var exception = assertThrows(
+                IllegalInputException.class,
+                () -> inputValidator.validate(delimiters, "A//[,]1,2,3")
+        );
+
+        assertEquals(exception.getMessage(), "Provided input seems useless. Reason: Improper input start Input: A//[,]1,2,3");
     }
 
     @Test
     public void shouldThrowIfInputNotSeemsProperlyDelimited() {
         var delimiters = new Delimiters(List.of(","), 0);
-        assertThrows(IllegalInputException.class, () -> inputValidator.validate(delimiters, "1-2-3"));
+
+        var exception = assertThrows(
+                IllegalInputException.class,
+                () -> inputValidator.validate(delimiters, "1-2-3")
+        );
+
+        assertEquals(exception.getMessage(), "Provided input seems useless. Reason: Malformed input Input: 1-2-3");
     }
 
     @Test
@@ -37,6 +49,12 @@ public class InputValidatorTest {
     @Test
     public void shouldThrowIfInputEndsWithDelimiter() {
         var delimiters = new Delimiters(List.of(","), 0);
-        assertThrows(IllegalInputException.class, () -> inputValidator.validate(delimiters, "A//[,]1,2,3,"));
+
+        var exception = assertThrows(
+                IllegalInputException.class,
+                () -> inputValidator.validate(delimiters, "//[,]1,2,3,")
+        );
+
+        assertEquals(exception.getMessage(), "Provided input seems useless. Reason: Improper input end Input: //[,]1,2,3,");
     }
 }
